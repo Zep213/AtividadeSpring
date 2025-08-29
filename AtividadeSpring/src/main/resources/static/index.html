@@ -86,7 +86,8 @@
         <input type="hidden" id="alunoId">
         <input type="text" id="nome" placeholder="Nome do Aluno" required>
         <input type="number" id="idade" placeholder="Idade do Aluno" required>
-        <button type="submit" onclick="criarAluno()">Salvar</button>
+        <button type="submit" id="btnSalvar">Salvar</button>
+        <button type="button" class="cancelar" id="btnCancelar" style="display:none;" onclick="limparFormulario()">Cancelar Edição</button>
     </form>
 
     <h2>Lista de Alunos</h2>
@@ -105,7 +106,7 @@
 </div>
 
 <script>
-    const apiUrl = 'http://localhost:8082/aluno'; // URL do seu backend
+    const apiUrl = 'http://localhost:8082/aluno'; // URL do backend.
     const form = document.getElementById('alunoForm');
     const alunoIdInput = document.getElementById('alunoId');
     const nomeInput = document.getElementById('nome');
@@ -114,7 +115,6 @@
     const btnCancelar = document.getElementById('btnCancelar');
     const tableBody = document.querySelector("#alunosTable tbody");
 
-    // Função para listar todos os alunos
     async function listarAlunos() {
         try {
             const response = await fetch(apiUrl);
@@ -122,9 +122,7 @@
                 throw new Error('Erro ao buscar alunos');
             }
             const alunos = await response.json();
-
-            tableBody.innerHTML = ''; // Limpa a tabela antes de preencher
-
+            tableBody.innerHTML = '';
             alunos.forEach(aluno => {
                 const row = `<tr>
                     <td>${aluno.id}</td>
@@ -143,16 +141,12 @@
         }
     }
 
-    // Função para Salvar (Adicionar ou Atualizar) um aluno
     async function salvarAluno(event) {
-        event.preventDefault(); // Evita o recarregamento da página
-
+        event.preventDefault();
         const id = alunoIdInput.value;
         const nome = nomeInput.value;
         const idade = idadeInput.value;
-
         const aluno = { nome, idade: parseInt(idade) };
-
         const isEditing = id !== '';
         const url = isEditing ? `${apiUrl}/${id}` : apiUrl;
         const method = isEditing ? 'PUT' : 'POST';
@@ -160,51 +154,41 @@
         try {
             const response = await fetch(url, {
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(aluno)
             });
-
             if (!response.ok) {
                 throw new Error('Erro ao salvar aluno');
             }
-
             limparFormulario();
-            listarAlunos(); // Atualiza a lista na tela
+            listarAlunos();
             alert(`Aluno ${isEditing ? 'atualizado' : 'salvo'} com sucesso!`);
-
         } catch (error) {
             console.error('Falha ao salvar:', error);
             alert('Ocorreu um erro ao salvar o aluno.');
         }
     }
 
-    // Prepara o formulário para edição
     function editarAluno(id, nome, idade) {
         alunoIdInput.value = id;
         nomeInput.value = nome;
         idadeInput.value = idade;
         btnSalvar.textContent = 'Atualizar';
         btnCancelar.style.display = 'block';
-        window.scrollTo(0, 0); // Rola a página para o topo para ver o formulário
+        window.scrollTo(0, 0);
     }
 
-    // Função para excluir um aluno
     async function excluirAluno(id) {
         if (confirm('Tem certeza que deseja excluir este aluno?')) {
             try {
                 const response = await fetch(`${apiUrl}/${id}`, {
                     method: 'DELETE'
                 });
-
                 if (!response.ok) {
                     throw new Error('Erro ao excluir aluno');
                 }
-
-                listarAlunos(); // Atualiza a lista na tela
+                listarAlunos();
                 alert('Aluno excluído com sucesso!');
-
             } catch (error) {
                 console.error('Falha ao excluir:', error);
                 alert('Ocorreu um erro ao excluir o aluno.');
@@ -212,7 +196,6 @@
         }
     }
 
-    // Limpa o formulário e redefine para o modo "Adicionar"
     function limparFormulario() {
         form.reset();
         alunoIdInput.value = '';
@@ -220,10 +203,7 @@
         btnCancelar.style.display = 'none';
     }
 
-    // Adiciona o evento de submit ao formulário
     form.addEventListener('submit', salvarAluno);
-
-    // Carrega a lista de alunos quando a página é aberta
     document.addEventListener('DOMContentLoaded', listarAlunos);
 </script>
 </body>
