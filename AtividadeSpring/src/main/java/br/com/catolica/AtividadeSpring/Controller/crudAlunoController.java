@@ -37,7 +37,22 @@ public class crudAlunoController {
         return "Aluno com ID " + id + " não encontrado.";
     }
 
-    //TODO:FAZER A BUSCA POR NOME(NAO SEI SE TEM QUE SER EXATAMENTE POR NOME)
+    @GetMapping("/busca")
+    public Object encontrarNome(@RequestParam(value = "nome", required = false) String nome ){
+        if (nome == null || nome.trim().isEmpty()) {
+            return listaAlunos;
+        }
+        List<Aluno> resultado = new ArrayList<>();
+
+        for (Aluno a : listaAlunos){
+            if (a.getNome().toLowerCase().contains(nome)) {
+                resultado.add(a);
+            }
+        }
+        return resultado;
+    }
+
+
 
     @PutMapping("/{id}")
     public Aluno atualizarAluno(@PathVariable int id, @RequestBody Aluno alunoAtualizado) {
