@@ -60,6 +60,8 @@ public class crudAlunoController {
             if (a.getId() == id) {
                 a.setNome(alunoAtualizado.getNome());
                 a.setIdade(alunoAtualizado.getIdade());
+                a.setEmail(alunoAtualizado.getEmail());
+                a.setCurso(alunoAtualizado.getCurso());
                 return a;
             }
         }
