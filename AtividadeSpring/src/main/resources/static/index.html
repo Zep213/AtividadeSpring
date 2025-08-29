@@ -86,6 +86,8 @@
         <input type="hidden" id="alunoId">
         <input type="text" id="nome" placeholder="Nome do Aluno" required>
         <input type="number" id="idade" placeholder="Idade do Aluno" required>
+        <input type="text" id="email" placeholder="Email do Aluno" required>
+        <input type="text" id="curso" placeholder="Curso do Aluno" required>
         <button type="submit" id="btnSalvar">Salvar</button>
         <button type="button" class="cancelar" id="btnCancelar" style="display:none;" onclick="limparFormulario()">Cancelar Edição</button>
     </form>
@@ -97,6 +99,8 @@
             <th>ID</th>
             <th>Nome</th>
             <th>Idade</th>
+            <th>Email</th>
+            <th>Curso</th>
             <th>Ações</th>
         </tr>
         </thead>
@@ -111,6 +115,8 @@
     const alunoIdInput = document.getElementById('alunoId');
     const nomeInput = document.getElementById('nome');
     const idadeInput = document.getElementById('idade');
+    const emailInput = document.getElementById('email');
+    const cursoInput = document.getElementById('curso');
     const btnSalvar = document.getElementById('btnSalvar');
     const btnCancelar = document.getElementById('btnCancelar');
     const tableBody = document.querySelector("#alunosTable tbody");
@@ -128,8 +134,10 @@
                     <td>${aluno.id}</td>
                     <td>${aluno.nome}</td>
                     <td>${aluno.idade}</td>
+                    <td>${aluno.email}</td>
+                    <td>${aluno.curso}</td>
                     <td class="actions">
-                        <button class="edit-btn" onclick="editarAluno(${aluno.id}, '${aluno.nome}', ${aluno.idade})">Editar</button>
+                        <button class="edit-btn" onclick="editarAluno(${aluno.id}, '${aluno.nome}', ${aluno.idade},{aluno.email},{aluno.curso})">Editar</button>
                         <button class="delete-btn" onclick="excluirAluno(${aluno.id})">Excluir</button>
                     </td>
                 </tr>`;
@@ -146,7 +154,9 @@
         const id = alunoIdInput.value;
         const nome = nomeInput.value;
         const idade = idadeInput.value;
-        const aluno = { nome, idade: parseInt(idade) };
+        const email = emailInput.value;
+        const curso = cursoInput.value;
+        const aluno = { nome, idade, email, curso: parseInt(idade) };
         const isEditing = id !== '';
         const url = isEditing ? `${apiUrl}/${id}` : apiUrl;
         const method = isEditing ? 'PUT' : 'POST';
@@ -169,10 +179,12 @@
         }
     }
 
-    function editarAluno(id, nome, idade) {
+    function editarAluno(id, nome, idade, email, curso) {
         alunoIdInput.value = id;
         nomeInput.value = nome;
         idadeInput.value = idade;
+        emailInput.value = email;
+        cursoInput.value = curso;
         btnSalvar.textContent = 'Atualizar';
         btnCancelar.style.display = 'block';
         window.scrollTo(0, 0);
