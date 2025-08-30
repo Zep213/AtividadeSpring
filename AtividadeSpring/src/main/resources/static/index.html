@@ -70,10 +70,17 @@
             gap: 10px;
         }
 
+        .search-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 1.5em;
+        }
+
         .search-container {
              display: flex;
              gap: 10px;
-             margin-bottom: 1em;
         }
 
         input {
@@ -124,6 +131,7 @@
 
         button.search-btn {
              background-color: var(--primary-color);
+             white-space: nowrap;
         }
 
          button.search-btn:hover {
@@ -207,10 +215,17 @@
 
     <div class="card">
         <h3>Lista de Alunos</h3>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar por nome...">
-            <button class="search-btn" onclick="searchAlunos()">Buscar</button>
+        <div class="search-area">
+            <div class="search-container">
+                <input type="text" id="searchNameInput" placeholder="Buscar por nome...">
+                <button class="search-btn" onclick="searchAlunosByName()">Buscar</button>
+            </div>
+            <div class="search-container">
+                <input type="number" id="searchIdInput" placeholder="Buscar por ID...">
+                <button class="search-btn" onclick="searchAlunoById()">Buscar</button>
+            </div>
         </div>
+        <button class="clear-btn" onclick="fetchAlunos()">Mostrar Todos</button>
         <table id="alunosTable">
             <thead>
             <tr>
@@ -255,6 +270,10 @@
     }
 
     function fetchAlunos() {
+        // Limpa os campos de busca ao recarregar a lista completa
+        document.getElementById('searchNameInput').value = '';
+        document.getElementById('searchIdInput').value = '';
+
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => renderTable(data));
@@ -322,12 +341,38 @@
         }
     }
 
-    function searchAlunos() {
-        const nome = document.getElementById('searchInput').value;
+    function searchAlunosByName() {
+        const nome = document.getElementById('searchNameInput').value;
         const url = nome ? `${apiUrl}/busca?nome=${encodeURIComponent(nome)}` : apiUrl;
         fetch(url)
             .then(response => response.json())
             .then(data => renderTable(data));
+    }
+
+    function searchAlunoById() {
+        const id = document.getElementById('searchIdInput').value;
+        if (!id) {
+            alert('Por favor, insira um ID para buscar.');
+            return;
+        }
+
+        fetch(`${apiUrl}/${id}`)
+            .then(response => {
+                // Como o backend retorna texto para 'não encontrado', precisamos verificar o tipo de conteúdo
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return response.json();
+                } else {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+            })
+            .then(aluno => {
+                renderTable([aluno]); // renderTable espera um array, então colocamos o aluno dentro de um
+            })
+            .catch(error => {
+                alert(error.message); // Exibe a mensagem "Aluno com ID X não encontrado."
+                fetchAlunos(); // Recarrega a lista completa
+            });
     }
 
     function clearForm() {
