@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Alunos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --danger-color: #dc3545;
+            --danger-hover-color: #c82333;
+            --light-gray-color: #f8f9fa;
+            --gray-color: #dee2e6;
+            --dark-gray-color: #343a40;
+            --background-color: #eef1f5;
+            --card-background-color: #ffffff;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 2em;
+            color: var(--dark-gray-color);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h2, h3 {
+            color: var(--dark-gray-color);
+            text-align: center;
+            margin-bottom: 1em;
+        }
+
+        .card {
+            background-color: var(--card-background-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2em;
+            margin-bottom: 2em;
+        }
+
+        #alunoForm {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 1.5em;
+        }
+
+        #alunoForm input {
+            grid-column: span 1;
+        }
+
+        #alunoForm .full-width {
+            grid-column: span 2;
+        }
+
+        .form-actions {
+            grid-column: span 2;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .search-container {
+             display: flex;
+             gap: 10px;
+             margin-bottom: 1em;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--gray-color);
+            border-radius: var(--border-radius);
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button[type="submit"] {
+            background-color: var(--primary-color);
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--primary-hover-color);
+        }
+
+        button.clear-btn {
+            background-color: var(--gray-color);
+            color: var(--dark-gray-color);
+        }
+
+        button.clear-btn:hover {
+            background-color: #c8cbcf;
+        }
+
+        button.search-btn {
+             background-color: var(--primary-color);
+        }
+
+         button.search-btn:hover {
+             background-color: var(--primary-hover-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-color);
+        }
+
+        thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        thead th:first-child {
+            border-top-left-radius: var(--border-radius);
+        }
+
+        thead th:last-child {
+            border-top-right-radius: var(--border-radius);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: var(--light-gray-color);
+        }
+
+        tbody tr:hover {
+            background-color: #e2e6ea;
+        }
+
+        .action-buttons button {
+            padding: 8px 12px;
+            margin-right: 5px;
+        }
+
+        .btn-edit {
+             background-color: var(--primary-color);
+        }
+        .btn-edit:hover {
+             background-color: var(--primary-hover-color);
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+        }
+        .btn-delete:hover {
+            background-color: var(--danger-hover-color);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Gerenciamento de Alunos</h2>
+
+    <div class="card">
+        <form id="alunoForm">
+            <input type="hidden" id="alunoId">
+            <input type="text" id="nome" placeholder="Nome Completo" required class="full-width">
+            <input type="number" id="idade" placeholder="Idade" required>
+            <input type="number" id="matricula" placeholder="Matrícula" required>
+            <input type="text" id="curso" placeholder="Curso" required>
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="text" id="telefone" placeholder="Telefone" required class="full-width">
+            <div class="form-actions">
+                <button type="button" class="clear-btn" onclick="clearForm()">Limpar</button>
+                <button type="submit">Salvar Aluno</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Lista de Alunos</h3>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar por nome...">
+            <button class="search-btn" onclick="searchAlunos()">Buscar</button>
+        </div>
+        <table id="alunosTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Matrícula</th>
+                <th>Curso</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const apiUrl = 'http://localhost:8082/aluno';
+
+    function renderTable(alunos) {
+        const tableBody = document.getElementById('alunosTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = '';
+        alunos.forEach(aluno => {
+            let row = tableBody.insertRow();
+            row.innerHTML = `
+                <td>${aluno.id}</td>
+                <td>${aluno.nome}</td>
+                <td>${aluno.idade}</td>
+                <td>${aluno.matricula}</td>
+                <td>${aluno.curso}</td>
+                <td>${aluno.email}</td>
+                <td>${aluno.telefone}</td>
+                <td class="action-buttons">
+                    <button class="btn-edit" onclick="editAluno(${aluno.id})">Editar</button>
+                    <button class="btn-delete" onclick="deleteAluno(${aluno.id})">Excluir</button>
+                </td>
+            `;
+        });
+    }
+
+    function fetchAlunos() {
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => renderTable(data));
+    }
+
+    document.getElementById('alunoForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const id = document.getElementById('alunoId').value;
+        const aluno = {
+            nome: document.getElementById('nome').value,
+            idade: parseInt(document.getElementById('idade').value),
+            matricula: parseInt(document.getElementById('matricula').value),
+            curso: document.getElementById('curso').value,
+            email: document.getElementById('email').value,
+            telefone: document.getElementById('telefone').value
+        };
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${apiUrl}/${id}` : apiUrl;
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(aluno),
+        })
+        .then(response => {
+            if (!response.ok) {
+                 throw new Error('A resposta da rede não foi ok');
+            }
+            return response.json();
+        })
+        .then(() => {
+            fetchAlunos();
+            clearForm();
+        })
+        .catch(error => console.error('Erro ao salvar aluno:', error));
+    });
+
+    function editAluno(id) {
+        fetch(`${apiUrl}/${id}`)
+            .then(response => response.json())
+            .then(aluno => {
+                document.getElementById('alunoId').value = aluno.id;
+                document.getElementById('nome').value = aluno.nome;
+                document.getElementById('idade').value = aluno.idade;
+                document.getElementById('matricula').value = aluno.matricula;
+                document.getElementById('curso').value = aluno.curso;
+                document.getElementById('email').value = aluno.email;
+                document.getElementById('telefone').value = aluno.telefone;
+                window.scrollTo(0, 0); // Rola a página para o topo para ver o formulário preenchido
+            });
+    }
+
+    function deleteAluno(id) {
+        if (confirm('Tem certeza que deseja excluir este aluno?')) {
+            fetch(`${apiUrl}/${id}`, {
+                method: 'DELETE',
+            })
+            .then(() => {
+                fetchAlunos();
+            });
+        }
+    }
+
+    function searchAlunos() {
+        const nome = document.getElementById('searchInput').value;
+        const url = nome ? `${apiUrl}/busca?nome=${encodeURIComponent(nome)}` : apiUrl;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => renderTable(data));
+    }
+
+    function clearForm() {
+        document.getElementById('alunoId').value = '';
+        document.getElementById('alunoForm').reset();
+    }
+
+    // Carrega os alunos quando a página é carregada pela primeira vez
+    document.addEventListener('DOMContentLoaded', fetchAlunos);
+</script>
+
+</body>
+</html>

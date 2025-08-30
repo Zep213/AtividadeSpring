@@ -45,7 +45,7 @@ public class crudAlunoController {
         List<Aluno> resultado = new ArrayList<>();
 
         for (Aluno a : listaAlunos){
-            if (a.getNome().toLowerCase().contains(nome)) {
+            if (a.getNome().toLowerCase().contains(nome.toLowerCase())) {
                 resultado.add(a);
             }
         }
@@ -60,8 +60,10 @@ public class crudAlunoController {
             if (a.getId() == id) {
                 a.setNome(alunoAtualizado.getNome());
                 a.setIdade(alunoAtualizado.getIdade());
+                a.setMatricula(alunoAtualizado.getMatricula());
                 a.setEmail(alunoAtualizado.getEmail());
                 a.setCurso(alunoAtualizado.getCurso());
+                a.setTelefone(alunoAtualizado.getTelefone());
                 return a;
             }
         }

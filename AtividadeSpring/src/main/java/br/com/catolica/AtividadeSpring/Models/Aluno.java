@@ -6,7 +6,7 @@ public class Aluno {
     private int idade;
     private int matricula ;
     private String curso;
-    private int email;
+    private String email;
     private String telefone;
 
     public int getId() {
@@ -49,11 +49,11 @@ public class Aluno {
         this.curso = curso;
     }
 
-    public int getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(int email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
