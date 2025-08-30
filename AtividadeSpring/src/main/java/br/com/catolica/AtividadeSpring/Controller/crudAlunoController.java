@@ -14,20 +14,21 @@ public class crudAlunoController {
     private static List<Aluno> listaAlunos = new ArrayList<>();
     private int contador = 1;
 
+
     @PostMapping
-    public Aluno criarAluno(@RequestBody Aluno aluno){
+    public Aluno criarAluno(@RequestBody Aluno aluno){ //Coloca o aluno dentro da lista de alunos
         aluno.setId(contador++);
         listaAlunos.add(aluno);
         return aluno;
     }
 
     @GetMapping
-    public List<Aluno> listarAlunos(){
+    public List<Aluno> listarAlunos(){ //lista os alunos
         return listaAlunos;
     }
 
     @GetMapping("/{id}")
-    public Object buscarPorId(@PathVariable int id) {
+    public Object buscarPorId(@PathVariable int id) { //Busca o aluno pelo id do arraylist
 
         for (Aluno a : listaAlunos) {
             if (a.getId() == id) {
@@ -37,7 +38,7 @@ public class crudAlunoController {
         return "Aluno com ID " + id + " não encontrado.";
     }
 
-    @GetMapping("/busca")
+    @GetMapping("/busca") //Busca o aluno pelo nome
     public Object encontrarNome(@RequestParam(value = "nome", required = false) String nome ){
         if (nome == null || nome.trim().isEmpty()) {
             return listaAlunos;
@@ -54,7 +55,7 @@ public class crudAlunoController {
 
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") //Atualiza o cadastro do aluno
     public Aluno atualizarAluno(@PathVariable int id, @RequestBody Aluno alunoAtualizado) {
         for (Aluno a : listaAlunos) {
             if (a.getId() == id) {
@@ -69,7 +70,7 @@ public class crudAlunoController {
         }
         return null;
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") //Remove o aluno
     public String removerAluno(@PathVariable int id) {
 
         for (Aluno a : listaAlunos) {
