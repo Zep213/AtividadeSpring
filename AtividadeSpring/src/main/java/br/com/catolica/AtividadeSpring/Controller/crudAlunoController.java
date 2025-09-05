@@ -43,18 +43,12 @@ public class crudAlunoController {
     private static List<Aluno> listaAlunos = new ArrayList<>();
 
     @GetMapping("/busca")
-    public Object encontraNome(@RequestParam(value = "nome", required = false) String nome ){
+    public List<Aluno> encontraNome(@RequestParam(value = "nome") String nome) {
+        // Se nenhum nome for fornecido ou estiver vazio, poderia retornar todos os alunos
         if (nome == null || nome.trim().isEmpty()) {
-            return listaAlunos;
+            return contatoJdbcDAO.listaTodos();
         }
-        List<Aluno> resultado = new ArrayList<>();
-
-        for (Aluno a : listaAlunos){
-            if (a.getNome().toLowerCase().contains(nome.toLowerCase())) {
-                resultado.add(a);
-            }
-        }
-        return resultado;
+        return contatoJdbcDAO.buscaPorNome(nome);
     }
 
     @PutMapping("/{id}")
@@ -73,7 +67,7 @@ public class crudAlunoController {
         return null;
     }
     @DeleteMapping("/{id}") //Remove o aluno
-    public String removerAluno(@PathVariable int id) {
+    public String removeAluno(@PathVariable int id) {
         for (Aluno a : listaAlunos) {
             if (a.getId() == id) {
                 listaAlunos.remove(a);
@@ -82,12 +76,5 @@ public class crudAlunoController {
         }
         return "Aluno com ID " + id + " não encontrado.";
     }
-    @GetMapping("/busca")
-    public List<Aluno> encontrarNome(@RequestParam(value = "nome") String nome) {
-        // Se nenhum nome for fornecido ou estiver vazio, poderia retornar todos os alunos
-        if (nome == null || nome.trim().isEmpty()) {
-            return contatoJdbcDAO.listaTodos();
-        }
-        return contatoJdbcDAO.buscaPorNome(nome);
-    }
+
 }
