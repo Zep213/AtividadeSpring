@@ -258,7 +258,7 @@
                 <td>${aluno.nome}</td>
                 <td>${aluno.idade}</td>
                 <td>${aluno.matricula}</td>
-                <td>${aluno.curso}</td>
+                <td>${aluno.curso.nome}</td>
                 <td>${aluno.email}</td>
                 <td>${aluno.telefone}</td>
                 <td class="action-buttons">
@@ -269,16 +269,6 @@
         });
     }
 
-    function fetchAlunos() {
-        // Limpa os campos de busca ao recarregar a lista completa
-        document.getElementById('searchNameInput').value = '';
-        document.getElementById('searchIdInput').value = '';
-
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => renderTable(data));
-    }
-
     document.getElementById('alunoForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -287,7 +277,9 @@
             nome: document.getElementById('nome').value,
             idade: parseInt(document.getElementById('idade').value),
             matricula: parseInt(document.getElementById('matricula').value),
-            curso: document.getElementById('curso').value,
+            curso: {
+                nome: document.getElementById('curso').value
+            },
             email: document.getElementById('email').value,
             telefone: document.getElementById('telefone').value
         };
@@ -323,11 +315,20 @@
                 document.getElementById('nome').value = aluno.nome;
                 document.getElementById('idade').value = aluno.idade;
                 document.getElementById('matricula').value = aluno.matricula;
-                document.getElementById('curso').value = aluno.curso;
+                document.getElementById('curso').value = aluno.curso.nome;
                 document.getElementById('email').value = aluno.email;
                 document.getElementById('telefone').value = aluno.telefone;
-                window.scrollTo(0, 0); // Rola a página para o topo para ver o formulário preenchido
+                window.scrollTo(0, 0);
             });
+    }
+
+    function fetchAlunos() {
+        document.getElementById('searchNameInput').value = '';
+        document.getElementById('searchIdInput').value = '';
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => renderTable(data));
     }
 
     function deleteAluno(id) {
@@ -358,7 +359,6 @@
 
         fetch(`${apiUrl}/${id}`)
             .then(response => {
-                // Como o backend retorna texto para 'não encontrado', precisamos verificar o tipo de conteúdo
                 const contentType = response.headers.get("content-type");
                 if (contentType && contentType.indexOf("application/json") !== -1) {
                     return response.json();
@@ -367,11 +367,11 @@
                 }
             })
             .then(aluno => {
-                renderTable([aluno]); // renderTable espera um array, então colocamos o aluno dentro de um
+                renderTable([aluno]);
             })
             .catch(error => {
-                alert(error.message); // Exibe a mensagem "Aluno com ID X não encontrado."
-                fetchAlunos(); // Recarrega a lista completa
+                alert(error.message);
+                fetchAlunos();
             });
     }
 
@@ -380,8 +380,8 @@
         document.getElementById('alunoForm').reset();
     }
 
-    // Carrega os alunos quando a página é carregada pela primeira vez
     document.addEventListener('DOMContentLoaded', fetchAlunos);
+
 </script>
 
 </body>

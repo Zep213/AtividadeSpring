@@ -1,6 +1,9 @@
 package br.com.catolica.AtividadeSpring.Controller;
 
 import br.com.catolica.AtividadeSpring.Models.Aluno;
+import br.com.catolica.AtividadeSpring.Repository.ContatoJdbcDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity; // Importar ResponseEntity
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -11,35 +14,36 @@ import java.util.List;
 @RequestMapping("/aluno")
 public class crudAlunoController {
 
-    private static List<Aluno> listaAlunos = new ArrayList<>();
-    private int contador = 1;
-
+    @Autowired
+    private ContatoJdbcDAO contatoJdbcDAO;
 
     @PostMapping
-    public Aluno criarAluno(@RequestBody Aluno aluno){ //Coloca o aluno dentro da lista de alunos
-        aluno.setId(contador++);
-        listaAlunos.add(aluno);
+    public Aluno criaAluno(@RequestBody Aluno aluno){
+        contatoJdbcDAO.salva(aluno);
         return aluno;
     }
 
     @GetMapping
-    public List<Aluno> listarAlunos(){ //lista os alunos
-        return listaAlunos;
+    public List<Aluno> listaAlunos(){
+        return contatoJdbcDAO.listaTodos();
     }
 
     @GetMapping("/{id}")
-    public Object buscarPorId(@PathVariable int id) { //Busca o aluno pelo id do arraylist
-
-        for (Aluno a : listaAlunos) {
-            if (a.getId() == id) {
-                return a;
-            }
+    public ResponseEntity<Object> buscaPorId(@PathVariable int id) { // Alterado para ResponseEntity
+        Aluno aluno = contatoJdbcDAO.buscaPorId(id);
+        if (aluno != null) {
+            return ResponseEntity.ok(aluno); // Retorna o aluno com status 200 OK
+        } else {
+            // Retorna a mensagem de erro com status 404 Not Found
+            return ResponseEntity.status(404).body("Aluno com ID " + id + " não encontrado.");
         }
-        return "Aluno com ID " + id + " não encontrado.";
     }
 
-    @GetMapping("/busca") //Busca o aluno pelo nome
-    public Object encontrarNome(@RequestParam(value = "nome", required = false) String nome ){
+
+    private static List<Aluno> listaAlunos = new ArrayList<>();
+
+    @GetMapping("/busca")
+    public Object encontraNome(@RequestParam(value = "nome", required = false) String nome ){
         if (nome == null || nome.trim().isEmpty()) {
             return listaAlunos;
         }
@@ -53,10 +57,8 @@ public class crudAlunoController {
         return resultado;
     }
 
-
-
-    @PutMapping("/{id}") //Atualiza o cadastro do aluno
-    public Aluno atualizarAluno(@PathVariable int id, @RequestBody Aluno alunoAtualizado) {
+    @PutMapping("/{id}")
+    public Aluno atualizaAluno(@PathVariable int id, @RequestBody Aluno alunoAtualizado) {
         for (Aluno a : listaAlunos) {
             if (a.getId() == id) {
                 a.setNome(alunoAtualizado.getNome());
@@ -72,7 +74,6 @@ public class crudAlunoController {
     }
     @DeleteMapping("/{id}") //Remove o aluno
     public String removerAluno(@PathVariable int id) {
-
         for (Aluno a : listaAlunos) {
             if (a.getId() == id) {
                 listaAlunos.remove(a);
@@ -81,5 +82,12 @@ public class crudAlunoController {
         }
         return "Aluno com ID " + id + " não encontrado.";
     }
-
+    @GetMapping("/busca")
+    public List<Aluno> encontrarNome(@RequestParam(value = "nome") String nome) {
+        // Se nenhum nome for fornecido ou estiver vazio, poderia retornar todos os alunos
+        if (nome == null || nome.trim().isEmpty()) {
+            return contatoJdbcDAO.listaTodos();
+        }
+        return contatoJdbcDAO.buscaPorNome(nome);
+    }
 }

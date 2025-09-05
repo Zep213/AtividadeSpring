@@ -4,6 +4,6 @@ CREATE TABLE alunos(
     idade INT,
     matricula INT,
     curso VARCHAR(100),
-    email VARCHAR(100)
+    email VARCHAR(100),
     telefone VARCHAR(100)
 );
