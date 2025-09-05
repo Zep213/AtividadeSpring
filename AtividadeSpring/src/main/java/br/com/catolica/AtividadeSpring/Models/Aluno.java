@@ -5,7 +5,7 @@ public class Aluno {
     private String nome;
     private int idade;
     private int matricula ;
-    private String curso;
+    private Curso curso;
     private String email;
     private String telefone;
 
@@ -41,11 +41,11 @@ public class Aluno {
         this.matricula = matricula;
     }
 
-    public String getCurso() {
+    public Curso getCurso() {
         return curso;
     }
 
-    public void setCurso(String curso) {
+    public void setCurso(Curso curso) {
         this.curso = curso;
     }
 
