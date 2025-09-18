@@ -52,29 +52,22 @@ public class crudAlunoController {
     }
 
     @PutMapping("/{id}")
-    public Aluno atualizaAluno(@PathVariable int id, @RequestBody Aluno alunoAtualizado) {
-        for (Aluno a : listaAlunos) {
-            if (a.getId() == id) {
-                a.setNome(alunoAtualizado.getNome());
-                a.setIdade(alunoAtualizado.getIdade());
-                a.setMatricula(alunoAtualizado.getMatricula());
-                a.setEmail(alunoAtualizado.getEmail());
-                a.setCurso(alunoAtualizado.getCurso());
-                a.setTelefone(alunoAtualizado.getTelefone());
-                return a;
-            }
+    public ResponseEntity<Aluno> atualizaAluno(@PathVariable int id, @RequestBody Aluno alunoAtualizado) {
+        // Verifica se o aluno existe antes de atualizar
+        if (contatoJdbcDAO.buscaPorId(id) == null) {
+            return ResponseEntity.notFound().build();
         }
-        return null;
-    }
-    @DeleteMapping("/{id}") //Remove o aluno
-    public String removeAluno(@PathVariable int id) {
-        for (Aluno a : listaAlunos) {
-            if (a.getId() == id) {
-                listaAlunos.remove(a);
-                return "Aluno com ID " + id + " removido com sucesso.";
-            }
-        }
-        return "Aluno com ID " + id + " não encontrado.";
+        alunoAtualizado.setId(id); // Garante que o ID do objeto é o mesmo da URL
+        contatoJdbcDAO.atualiza(id, alunoAtualizado);
+        return ResponseEntity.ok(alunoAtualizado);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> removeAluno(@PathVariable int id) {
+        int result = contatoJdbcDAO.deleta(id);
+        if (result > 0) {
+            return ResponseEntity.ok("Aluno com ID " + id + " removido com sucesso.");
+        }
+        return ResponseEntity.status(404).body("Aluno com ID " + id + " não encontrado.");
+    }
 }

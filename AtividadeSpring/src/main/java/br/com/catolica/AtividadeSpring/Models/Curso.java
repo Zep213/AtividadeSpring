@@ -2,7 +2,7 @@ package br.com.catolica.AtividadeSpring.Models;
 
 public class Curso {
     private String nome;
-    private String id;
+    private int id;
 
     public String getNome() {
         return nome;
@@ -12,11 +12,11 @@ public class Curso {
         this.nome = nome;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

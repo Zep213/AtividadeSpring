@@ -199,13 +199,13 @@
 
     <div class="card">
         <form id="alunoForm">
-            <input type="hidden" id="alunoId">
-            <input type="text" id="nome" placeholder="Nome Completo" required class="full-width">
-            <input type="number" id="idade" placeholder="Idade" required>
-            <input type="number" id="matricula" placeholder="Matrícula" required>
-            <input type="text" id="curso" placeholder="Curso" required>
-            <input type="email" id="email" placeholder="E-mail" required>
-            <input type="text" id="telefone" placeholder="Telefone" required class="full-width">
+            <input type="hidden" id="alunoId" name="id">
+            <input type="text" id="nome" name="nome" placeholder="Nome Completo" required class="full-width">
+            <input type="number" id="idade" name="idade" placeholder="Idade" required>
+            <input type="number" id="matricula" name="matricula" placeholder="Matrícula" required>
+            <input type="text" id="curso" name="curso" placeholder="Curso" required>
+            <input type="email" id="email" name="email" placeholder="E-mail" required>
+            <input type="text" id="telefone" name="telefone" placeholder="Telefone" required class="full-width">
             <div class="form-actions">
                 <button type="button" class="clear-btn" onclick="clearForm()">Limpar</button>
                 <button type="submit">Salvar Aluno</button>
@@ -248,26 +248,33 @@
 <script>
     const apiUrl = 'http://localhost:8082/aluno';
 
-    function renderTable(alunos) {
-        const tableBody = document.getElementById('alunosTable').getElementsByTagName('tbody')[0];
-        tableBody.innerHTML = '';
-        alunos.forEach(aluno => {
-            let row = tableBody.insertRow();
-            row.innerHTML = `
-                <td>${aluno.id}</td>
-                <td>${aluno.nome}</td>
-                <td>${aluno.idade}</td>
-                <td>${aluno.matricula}</td>
-                <td>${aluno.curso.nome}</td>
-                <td>${aluno.email}</td>
-                <td>${aluno.telefone}</td>
-                <td class="action-buttons">
-                    <button class="btn-edit" onclick="editAluno(${aluno.id})">Editar</button>
-                    <button class="btn-delete" onclick="deleteAluno(${aluno.id})">Excluir</button>
-                </td>
-            `;
-        });
+function renderTable(alunos) {
+    const tableBody = document.getElementById('alunosTable').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = '';
+
+    // Se a lista de alunos estiver vazia, não faz nada
+    if (!alunos || alunos.length === 0) {
+        return;
     }
+
+    alunos.forEach(aluno => {
+        let row = tableBody.insertRow();
+
+        row.innerHTML = `
+            <td>${aluno.id}</td>
+            <td>${aluno.nome}</td>
+            <td>${aluno.idade}</td>
+            <td>${aluno.matricula}</td>
+            <td>${nomeCurso}</td>
+            <td>${aluno.email}</td>
+            <td>${aluno.telefone}</td>
+            <td class="action-buttons">
+                <button class="btn-edit" onclick="editAluno(${aluno.id})">Editar</button>
+                <button class="btn-delete" onclick="deleteAluno(${aluno.id})">Excluir</button>
+            </td>
+        `;
+    });
+}
 
     document.getElementById('alunoForm').addEventListener('submit', function(e) {
         e.preventDefault();

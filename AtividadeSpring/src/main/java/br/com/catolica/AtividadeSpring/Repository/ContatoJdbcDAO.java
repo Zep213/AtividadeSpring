@@ -6,10 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -27,11 +31,29 @@ public class ContatoJdbcDAO {
         aluno.setEmail(rs.getString("email"));
         aluno.setTelefone(rs.getString("telefone"));
         Curso curso = new Curso();
-        curso.setNome(rs.getString("curso"));
+        curso.setId(rs.getInt("curso_id"));
+        curso.setNome(rs.getString("curso_nome"));
         aluno.setCurso(curso);
 
         return aluno;
     };
+    private int getOrCreateCursoId(String nomeCurso) {
+        String sqlSelect = "SELECT id FROM cursos WHERE nome = ?";
+        try {
+            // Tenta buscar o ID do curso se ele já existe
+            return jdbcTemplate.queryForObject(sqlSelect, new Object[]{nomeCurso}, Integer.class);
+        } catch (EmptyResultDataAccessException e) {
+            // Se o curso não existe, insere e retorna o novo ID
+            String sqlInsert = "INSERT INTO cursos (nome) VALUES (?)";
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, nomeCurso);
+                return ps;
+            }, keyHolder);
+            return keyHolder.getKey().intValue();
+        }
+    }
 
     public void salva(Aluno aluno) {
         String sql = "INSERT INTO alunos (nome, idade, matricula, curso, email, telefone) VALUES (?, ?, ?, ?, ?, ?)";
@@ -39,12 +61,14 @@ public class ContatoJdbcDAO {
     }
 
     public List<Aluno> listaTodos() {
-        String sql = "SELECT * FROM alunos";
+        // CORREÇÃO: Trocado JOIN por LEFT JOIN
+        String sql = "SELECT a.*, c.nome AS curso_nome FROM alunos a LEFT JOIN cursos c ON a.curso_id = c.id";
         return jdbcTemplate.query(sql, alunoRowMapper);
     }
 
     public Aluno buscaPorId(int id) {
-        String sql = "SELECT * FROM alunos WHERE id = ?";
+        // CORREÇÃO: Trocado JOIN por LEFT JOIN
+        String sql = "SELECT a.*, c.nome AS curso_nome FROM alunos a LEFT JOIN cursos c ON a.curso_id = c.id WHERE a.id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{id}, alunoRowMapper);
         } catch (EmptyResultDataAccessException e) {
