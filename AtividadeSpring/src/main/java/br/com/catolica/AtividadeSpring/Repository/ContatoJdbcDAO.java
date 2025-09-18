@@ -56,8 +56,9 @@ public class ContatoJdbcDAO {
     }
 
     public void salva(Aluno aluno) {
-        String sql = "INSERT INTO alunos (nome, idade, matricula, curso, email, telefone) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, aluno.getNome(), aluno.getIdade(), aluno.getMatricula(), aluno.getCurso().getNome(), aluno.getEmail(), aluno.getTelefone());
+        int cursoId = getOrCreateCursoId(aluno.getCurso().getNome());
+        String sql = "INSERT INTO alunos (nome, idade, matricula, curso_id, email, telefone) VALUES (?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, aluno.getNome(), aluno.getIdade(), aluno.getMatricula(), cursoId, aluno.getEmail(), aluno.getTelefone());
     }
 
     public List<Aluno> listaTodos() {
@@ -75,20 +76,20 @@ public class ContatoJdbcDAO {
         }
     }
     public List<Aluno> buscaPorNome(String nome) {
-        // Lower para ignorar se sao maiusculas ou nao e % para buscas parciais
-        String sql = "SELECT * FROM alunos WHERE LOWER(nome) LIKE LOWER(?)";
+        String sql = "SELECT a.*, c.nome AS curso_nome FROM alunos a LEFT JOIN cursos c ON a.curso_id = c.id WHERE LOWER(a.nome) LIKE LOWER(?)";
         String nomeParaBusca = "%" + nome + "%";
         return jdbcTemplate.query(sql, new Object[]{nomeParaBusca}, alunoRowMapper);
     }
 
 
     public int atualiza(int id, Aluno aluno) {
-        String sql = "UPDATE alunos SET nome = ?, idade = ?, matricula = ?, curso = ?, email = ?, telefone = ? WHERE id = ?";
+        int cursoId = getOrCreateCursoId(aluno.getCurso().getNome());
+        String sql = "UPDATE alunos SET nome = ?, idade = ?, matricula = ?, curso_id = ?, email = ?, telefone = ? WHERE id = ?";
         return jdbcTemplate.update(sql,
                 aluno.getNome(),
                 aluno.getIdade(),
                 aluno.getMatricula(),
-                aluno.getCurso().getNome(),
+                cursoId,
                 aluno.getEmail(),
                 aluno.getTelefone(),
                 id);
