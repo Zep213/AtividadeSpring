@@ -61,7 +61,6 @@ public class ContatoJdbcDAO {
     }
 
     public List<Aluno> listaTodos() {
-        // CORREÇÃO: Trocado JOIN por LEFT JOIN
         String sql = "SELECT a.*, c.nome AS curso_nome FROM alunos a LEFT JOIN cursos c ON a.curso_id = c.id";
         return jdbcTemplate.query(sql, alunoRowMapper);
     }
