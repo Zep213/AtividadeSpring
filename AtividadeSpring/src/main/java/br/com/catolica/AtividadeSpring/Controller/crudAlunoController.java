@@ -1,6 +1,6 @@
 package br.com.catolica.AtividadeSpring.Controller;
 
-import br.com.catolica.AtividadeSpring.Models.Aluno;
+import br.com.catolica.AtividadeSpring.Models.dto.Aluno;
 import br.com.catolica.AtividadeSpring.Repository.ContatoJdbcDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity; // Importar ResponseEntity

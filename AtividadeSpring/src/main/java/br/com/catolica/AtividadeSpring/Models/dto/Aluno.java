@@ -1,4 +1,4 @@
-package br.com.catolica.AtividadeSpring.Models;
+package br.com.catolica.AtividadeSpring.Models.dto;
 
 public class Aluno {
     private int id;

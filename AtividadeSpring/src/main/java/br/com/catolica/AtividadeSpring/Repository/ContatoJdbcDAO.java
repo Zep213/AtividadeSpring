@@ -1,7 +1,7 @@
 package br.com.catolica.AtividadeSpring.Repository;
 
-import br.com.catolica.AtividadeSpring.Models.Aluno;
-import br.com.catolica.AtividadeSpring.Models.Curso;
+import br.com.catolica.AtividadeSpring.Models.dto.Aluno;
+import br.com.catolica.AtividadeSpring.Models.dto.Curso;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,8 +11,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
